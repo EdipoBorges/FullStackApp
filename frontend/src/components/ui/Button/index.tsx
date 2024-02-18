@@ -16,9 +16,15 @@ export function Button({ Loading, children, ...rest}: ButtonProps) {
     disabled={Loading}
     {...rest}
     >
+        {Loading ? (
+        <FaSpinner color="#FFF" size={16}/>
+        ) : (
         <a className={styles.buttonText}>
             {children}
         </a>
+        )}
+
+        
     </button>
   );
 }
