@@ -83,6 +83,12 @@ export default function Contact({ categoryList }: CategoryProps){
             toast.error('Erro ao cadastrar contato');
         }       
 
+        setName('');
+        setPrice('');
+        setDescription('');
+        setAvatarUrl('');
+        setImageAvatar(null);
+        
     }
 
     return (
