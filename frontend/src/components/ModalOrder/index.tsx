@@ -9,9 +9,10 @@ interface ModalOrderProps {
     isOpen: boolean;
     onRequestClose: () => void;
     order: OrderItemProps;
+    handleFinishOrder: (id: string) => void;
 }
 
-export function ModalOrder({ isOpen, onRequestClose, order }: ModalOrderProps) {
+export function ModalOrder({ isOpen, onRequestClose, order, handleFinishOrder }: ModalOrderProps) {
 
 
     const customStyles = {
@@ -22,7 +23,7 @@ export function ModalOrder({ isOpen, onRequestClose, order }: ModalOrderProps) {
             right: 'auto',
             padding: '30px',
             transform: 'translate(-50%, -50%)',
-            backgroundColor: '#1e1e3e',
+            backgroundColor: '#1d2b2e',
         }
     };
 
@@ -42,6 +43,25 @@ export function ModalOrder({ isOpen, onRequestClose, order }: ModalOrderProps) {
             >
                 <FiX size={45} color="#d03535" />
             </button>
+
+            <div className={styles.container}>
+                <h2>Detalhes da Reunião</h2>
+                <span className={styles.table}>
+                    Reunião: <strong>{order[0].order.table}</strong>
+                </span>
+
+                {order.map( item => (
+                    <section key={item.id} className={styles.containerItem}>
+                        <span>{item.amount} - <strong>{item.product.name}</strong></span>
+                        <span className={styles.description}>{item.product.description}</span>
+                    </section>
+                        ))}
+
+                    <button className={styles.buttonOrder} onClick={() => handleFinishOrder(order[0].order_id)}>
+                        Finalizar
+                    </button>
+
+            </div>
 
         </Modal>
     )

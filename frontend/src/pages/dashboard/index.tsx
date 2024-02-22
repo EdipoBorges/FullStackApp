@@ -38,12 +38,12 @@ export type OrderItemProps = {
     order: {
         id: string;
         table: string | number;
-        status: boolean;        
+        status: boolean;
         name: string | null;
     }
 }
 
-export default function Dashboard({orders}: HomeProps) {
+export default function Dashboard({ orders }: HomeProps) {
 
     const [orderList, setOrderList] = useState(orders || []);
 
@@ -67,45 +67,72 @@ export default function Dashboard({orders}: HomeProps) {
         setModalVisible(true);
     }
 
+    async function handleFinishItem(id: string) {
+        const apiClient = setupAPIClient();
+        await apiClient.put(`/order/finish`, {
+            order_id: id
+        });
+
+        const response = await apiClient.get('/orders');
+
+        setOrderList(response.data);
+        setModalVisible(false);
+    }
+
+    async function handleRefreshOrders() {
+        const apiClient = setupAPIClient();
+        const response = await apiClient.get('/orders');
+
+        setOrderList(response.data);
+    }
+
     Modal.setAppElement('#__next');
 
     return (
         <>
-        <Head>
-            <title>Painel - Agregador de Contatos</title>
-        </Head>
-        <div>
-            <Header />
-            <main className={styles.container}>
-                <div className={styles.containerHeader}>
-                    <h1>Ultimas Reuniões </h1>
-                    <button>
-                        <FiRefreshCcw size={20} color="#165b39" />
-                    </button>
-                </div>
-
-                <article className={styles.listOrders}>
-
-                    {orderList.map(item => (
-                        <section key={item.id} className={styles.orderItem}>
-                        <button onClick={() => handleOpenModalView(item.id)}>
-                            <div className={styles.tag}></div>
-                            <span>Reunião {item.table}</span>
+            <Head>
+                <title>Painel - Agregador de Contatos</title>
+            </Head>
+            <div>
+                <Header />
+                <main className={styles.container}>
+                    <div className={styles.containerHeader}>
+                        <h1>Ultimas Reuniões </h1>
+                        <button onClick={handleRefreshOrders}>
+                            <FiRefreshCcw size={20} color="#165b39" />
                         </button>
-                    </section>
-                    )) }                    
-                </article>
-            </main>
+                    </div>
 
-            {modalVisible && (
-                <ModalOrder
-                    isOpen={modalVisible}
-                    onRequestClose={handleCloseModal}
-                    order={modalItem}                    
-                />
+                    <article className={styles.listOrders}>
+
+                        {orderList.length === 0 && (
+                            <span className={styles.emptyList}>
+                                Nenhuma reunião encontrada
+                            </span>
+                        )}
+
+                        {orderList.map(item => (
+                            <section key={item.id} className={styles.orderItem}>
+                                <button onClick={() => handleOpenModalView(item.id)}>
+                                    <div className={styles.tag}></div>
+                                    <span>Reunião {item.table}</span>
+                                </button>
+                            </section>
+                        ))}
+                    </article>
+                </main>
+
+                {modalVisible && (
+                    <ModalOrder
+                        isOpen={modalVisible}
+                        onRequestClose={handleCloseModal}
+                        // @ts-ignore
+                        order={modalItem}
+                        handleFinishOrder={handleFinishItem}
+                    />
                 )}
-        </div>
-        </>        
+            </div>
+        </>
     )
 }
 
