@@ -1,33 +1,52 @@
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native'
 
+import { AuthContext } from '../../contexts/AuthContext';
+
+
 export default function SignIn(){
+  const { signIn } = useContext(AuthContext)
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  async function handleLogin(){
+
+    if(email === '' || password === ''){
+      return
+    }
+
+   await signIn({email, password})
+    
+  }
+
   return(
     <View style={styles.container}>
       <Image
         style={styles.logo}
-        source={require('../../assets/logo_trial.png')}
+        source={require('../../assets/logo_trial.jpg')}
       />
 
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Digite seu email"   
+          placeholder="Digite seu Email"   
           style={styles.input}     
           placeholderTextColor="#F0F0F0"
+          value={email}
+          onChangeText={setEmail}
         />
-
         <TextInput
           placeholder="Sua Senha"      
           style={styles.input}   
           placeholderTextColor="#F0F0F0"
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />     
-
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Acessar</Text>
         </TouchableOpacity>   
       </View>
-
     </View>
   )
 }
@@ -40,8 +59,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1d2e24'
   },
   logo:{
-    marginBottom: 0,
-    resizeMode: "center"    
+    marginBottom: 18
   },
   inputContainer:{
     width: '95%',
