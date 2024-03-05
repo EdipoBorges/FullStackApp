@@ -22,9 +22,9 @@ function Routes() {
         );
     }
 
-    return (
+    return(
         isAuthenticated ? <AppRoutes/> : <AuthRoutes/>
-    );
+      )
 }
 
 export default Routes;
