@@ -5,10 +5,9 @@ import Routes from './src/routes';
 
 import { AuthProvider } from './src/contexts/AuthContext';
 
-
 export default function App() {
   return (
-    < NavigationContainer>
+    <NavigationContainer>
       <AuthProvider>
         <StatusBar backgroundColor="#1d1d2e" barStyle="light-content" translucent={false} />
         <Routes />

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'reac
 
 import { AuthContext } from '../../contexts/AuthContext';
 
-
 export default function SignIn(){
   const { signIn } = useContext(AuthContext)
 
@@ -16,8 +15,7 @@ export default function SignIn(){
       return
     }
 
-   await signIn({email, password})
-    
+   await signIn({email, password})    
   }
 
   return(

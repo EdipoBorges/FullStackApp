@@ -1,13 +1,17 @@
-import React, {useState, createContext, ReactNode } from "react";
+import React, { useState, createContext, ReactNode, useEffect } from "react";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { api } from "../services/api";
-import { set } from "cypress/types/lodash";
 
 type AuthContextData = {
     user: UserProps;
     isAuthenticated: boolean;
     signIn: (credentials: SignInProps) => Promise<void>;
-    };
+    loadingAuth: boolean;
+    loading: boolean;
+    signOut: () => Promise<void>;
+};
 
 type UserProps = {
     id: string;
@@ -27,7 +31,7 @@ type SignInProps = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
-export function AuthProvider({children}: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserProps>({
         id: '',
         name: '',
@@ -36,40 +40,83 @@ export function AuthProvider({children}: AuthProviderProps) {
     });
 
     const [loadingAuth, setLoadingAuth] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const isAuthenticated = !!user.name;
 
-   async function signIn({email, password}: SignInProps) {
+    useEffect(() => {
+        async function getUser() {
+            const userInfo = await AsyncStorage.getItem('@sujeito');
+            let hasUser: UserProps = JSON.parse(userInfo|| '{}');
+            
+            if(Object.keys(hasUser).length > 0){
+                api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`;
+
+                setUser({
+                    id: hasUser.id,
+                    name: hasUser.name,
+                    email: hasUser.email,
+                    token: hasUser.token                
+                });
+            }
+
+            setLoading(false);
+        }
+        getUser();
+    }, []);
+
+    async function signIn({ email, password }: SignInProps) {
         setLoadingAuth(true);
 
         try {
-            const response = await api.post('/sessions', {
+            const response = await api.post('/session', {
                 email,
                 password
             });
+            console.log(response.data)
+
+            const { id, name, token } = response.data;
+
+            const data = {
+                ...response.data
+            };
+
+            await AsyncStorage.setItem('@sujeito', JSON.stringify(data))
+
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
             setUser({
-                id: response.data.user.id,
-                name: response.data.user.name,
-                email: response.data.user.email,
-                token: response.data.token
-            });
-
-            api.defaults.headers['Authorization'] = `Bearer ${response.data.token}`;
+                id,
+                name,
+                email,
+                token
+            })
 
             setLoadingAuth(false);
+
         } catch (err) {
             console.log('Erro ao Acessar', err);
             setLoadingAuth(false);
         }
+    }
 
-
-
+    async function signOut() {
+        await AsyncStorage.clear()
+        .then(() => {
+            setUser({
+                id: '',
+                name: '',
+                email: '',
+                token: ''
+            });
+        })
+        ;
     }
 
 
+
     return (
-        <AuthContext.Provider value={{user, isAuthenticated, signIn}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, signIn, loading, loadingAuth, signOut }}>
             {children}
         </AuthContext.Provider>
     );
