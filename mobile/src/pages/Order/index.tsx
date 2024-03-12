@@ -1,10 +1,127 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal } from "react-native";
+
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+
+import { Feather } from "@expo/vector-icons";
+import { api } from "../../services/api";
+import { ModalPiker } from "../../components/ModalPiker";
+
+type RouteDetailsParams = {
+    Order: {
+        number: string | number;
+        order_id: string;
+    };
+};
+
+export type CategoryProps = {
+    id: string;
+    name: string;
+};
+
+type OrderRouteProps = RouteProp<RouteDetailsParams, "Order">;
 
 export default function Order() {
+    const route = useRoute<OrderRouteProps>();
+    const navigation = useNavigation();
+
+    const [category, setCategory] = useState<CategoryProps[] | []>([]);
+    const [categorySelected, setCategorySelected] = useState<CategoryProps[]>();
+    const [modalCategoryVisible, setModalCategoryVisible] = useState(false);
+
+    const [amount, setAmount] = useState('1');
+
+    useEffect(() => {
+        async function loadInfo() {
+
+            const response = await api.get('/category');
+
+            setCategory(response.data);
+            setCategorySelected(response.data[0]);
+        }
+        loadInfo();
+    }, []);
+
+    async function handleCloseOrder() {
+        try {
+            await api.delete('/order', {
+                params: {
+                    order_id: route.params?.order_id
+                }
+            });
+
+            navigation.goBack();
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    function handleChangeCategory(item: CategoryProps) {
+        setCategorySelected(item);
+ 
+    }
+
     return (
         <View style={styles.container}>
-            <Text>Tela Reunião</Text>
+            <View style={styles.header}>
+                <Text style={styles.title}>Reunião {route.params.number}
+                </Text>
+                <TouchableOpacity onPress={handleCloseOrder}>
+                    <Feather name="trash-2" size={28} color="red" />
+                </TouchableOpacity>
+            </View>
+
+            {category.length !== 0 && (
+                <TouchableOpacity style={styles.input} onPress={() => setModalCategoryVisible(true)}>
+                    <Text style={{ color: "#fff" }}>
+                        {categorySelected?.name}
+                    </Text>
+                </TouchableOpacity>
+            )}
+
+            <TouchableOpacity style={styles.input}>
+                <Text style={{ color: "#fff" }}>Contato Henrique</Text>
+            </TouchableOpacity>
+
+            <View style={styles.qtdContainer}>
+                <Text style={styles.qtdText}>Quantidade de participantes</Text>
+                <TextInput
+                    style={[styles.input, { width: "30%", textAlign: "center" }]}
+                    keyboardType="numeric"
+                    placeholderTextColor="#fff"
+                    value={amount}
+                    onChangeText={setAmount}
+                />
+            </View>
+
+            <View style={styles.actions}>
+                <TouchableOpacity style={styles.buttonAdd}>
+                    <Text style={styles.buttonText}>+</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Avançar</Text>
+                </TouchableOpacity>
+            </View>
+
+
+            <Modal
+                transparent={true}
+                visible={modalCategoryVisible}
+                animationType="fade"
+            >
+                <ModalPiker
+                    handleCloseModal={() => setModalCategoryVisible(false)}
+                    options={category}
+                    selectedItem={ handleChangeCategory }
+                />
+
+            </Modal>
+
+
+
+
         </View>
     );
 }
@@ -12,9 +129,77 @@ export default function Order() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingVertical: '5%',
+        paddingEnd: '4%',
+        paddingStart: '4%',
+        backgroundColor: "#297261",
+    },
+    header: {
+        flexDirection: "row",
+        marginBottom: 12,
+        marginTop: 24,
+        alignItems: "center",
+    },
+
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#fff",
+        marginRight: 12,
+    },
+
+    input: {
+        height: 40,
+        backgroundColor: "#1e5f4b",
+        borderRadius: 4,
+        width: "100%",
+        justifyContent: "center",
+        paddingHorizontal: 8,
+        marginBottom: 12,
+        color: "#fff",
+        fontSize: 18,
+    },
+
+    qtdContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+
+    qtdText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#fff",
+    },
+
+    actions: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between",
+    },
+
+    buttonAdd: {
+        backgroundColor: "#1e4c5f",
+        borderRadius: 4,
+        height: 40,
+        width: "20%",
         justifyContent: "center",
         alignItems: "center",
-        paddingVertical: 15,
-        backgroundColor: "#297261",
+    },
+
+    buttonText: {
+        color: "#000000",
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+
+    button: {
+        backgroundColor: "#3e5f1e",
+        borderRadius: 4,
+        height: 40,
+        width: "75%",
+        alignItems: "center",
+        justifyContent: "center",
+
     },
 });

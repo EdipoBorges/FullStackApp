@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackPramsList } from "../../routes/app.routes";
 
+import { api } from "../../services/api";
+
 export default function Dashboard() {
 
   const navigation = useNavigation<NativeStackNavigationProp<StackPramsList>>();
@@ -16,14 +18,22 @@ export default function Dashboard() {
       return;
     }
 
-    navigation.navigate("Order", {number: number, order_id: "123"})
+    const response = await api.post("/order", {
+      table: Number(number),
+    });
+
+    //console.log(response.data);
+
+    navigation.navigate("Order", { number: number, order_id: response.data.id })
+
+    setNumber("");
   }
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Nova Reunião</Text>
 
-      <TextInput        
+      <TextInput
         placeholder="Digite o numero da reunião"
         placeholderTextColor={"#000000"}
         style={styles.input}
@@ -36,7 +46,7 @@ export default function Dashboard() {
         <Text style={styles.buttonText}>Abrir Reunião</Text>
       </TouchableOpacity>
 
-    </SafeAreaView>    
+    </SafeAreaView>
   );
 }
 
@@ -48,7 +58,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     backgroundColor: "#297261",
   },
-  
+
   title: {
     fontSize: 30,
     fontWeight: "bold",
