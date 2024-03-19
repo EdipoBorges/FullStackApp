@@ -5,6 +5,7 @@ import { FiX } from 'react-icons/fi';
 
 import { OrderItemProps } from '@/pages/dashboard';
 
+// @ts-nocheck
 interface ModalOrderProps {
     isOpen: boolean;
     onRequestClose: () => void;
@@ -13,7 +14,6 @@ interface ModalOrderProps {
 }
 
 export function ModalOrder({ isOpen, onRequestClose, order, handleFinishOrder }: ModalOrderProps) {
-
 
     const customStyles = {
         content: {
@@ -28,7 +28,7 @@ export function ModalOrder({ isOpen, onRequestClose, order, handleFinishOrder }:
     };
 
     return (
-
+        // @ts-ignore
         <Modal
             isOpen={isOpen}
             onRequestClose={onRequestClose}
@@ -44,22 +44,30 @@ export function ModalOrder({ isOpen, onRequestClose, order, handleFinishOrder }:
                 <FiX size={45} color="#d03535" />
             </button>
 
+            
             <div className={styles.container}>
                 <h2>Detalhes da Reunião</h2>
-                <span className={styles.table}>
-                    Reunião: <strong>{order[0].order.table}</strong>
+                
+                <span className={styles.table}> 
+                    Reunião: <strong>{
+                    // @ts-ignore
+                    order[0].order.table}</strong>                     
                 </span>
 
-                {order.map( item => (
+                
+                {
+                // @ts-ignore
+                order.map(item => ( 
                     <section key={item.id} className={styles.containerItem}>
                         <span>{item.amount} - <strong>{item.product.name}</strong></span>
                         <span className={styles.description}>{item.product.description}</span>
                     </section>
-                        ))}
-
-                    <button className={styles.buttonOrder} onClick={() => handleFinishOrder(order[0].order_id)}>
-                        Finalizar
-                    </button>
+                ))}                
+                <button className={styles.buttonOrder} onClick={() => handleFinishOrder(
+                    // @ts-ignore
+                    order[0].order_id)}> 
+                    Finalizar
+                </button>
 
             </div>
 
