@@ -11,6 +11,9 @@ The available cell phone application makes it possible to quickly close agreemen
 
 Once the agreement is closed, the meeting is available for later analysis on the responsive dashboard.
 
+![image](https://github.com/EdipoBorges/FullStackApp/assets/127257106/64207dd8-1fc1-4c9a-afe8-3b451cd9d00c)
+
+
 ## 🚀 Technologies
 This project is using the following technologies:
     
