@@ -21,7 +21,7 @@ export function Header() {
 
             <nav className={styles.menuNav}>
                 <Link href='/category'>
-                    Category
+                    Categoria
                 </Link>
                 <Link href='/contacts'>
                     Contatos
