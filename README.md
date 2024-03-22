@@ -13,6 +13,20 @@ Once the agreement is closed, the meeting is available for later analysis on the
 
 ![image](https://github.com/EdipoBorges/FullStackApp/assets/127257106/64207dd8-1fc1-4c9a-afe8-3b451cd9d00c)
 
+<img width="309" alt="image" src="https://github.com/EdipoBorges/FullStackApp/assets/127257106/c363c175-076d-4138-93fb-d73d8d44befe">
+
+<img width="588" alt="image" src="https://github.com/EdipoBorges/FullStackApp/assets/127257106/a3cb1cdf-ea44-410e-b77f-796aa9aae5df">
+
+
+
+
+
+
+
+<img width="157" alt="image" src="https://github.com/EdipoBorges/FullStackApp/assets/127257106/89dd7b26-4cfe-4105-a695-35458d625396">
+
+<img width="160" alt="image" src="https://github.com/EdipoBorges/FullStackApp/assets/127257106/0c95ecae-eca3-4796-8838-83a4ce00472a">
+
 
 ## 🚀 Technologies
 This project is using the following technologies:
